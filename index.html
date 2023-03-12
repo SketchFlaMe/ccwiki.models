@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - exporter - stl</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				display:block;
+			}
+			#info a {
+				color: #046;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="info">
+			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - 官方examples修改(图片插值未修改)<br/><br/>
+		</div>
+
+		<script src="threejs/three.js"></script>
+		<script src="threejs/OrbitControls.js"></script>
+		<script src="threejs/STLExporter.js"></script>
+
+		<script src="threejs/WebGL.js"></script>
+		<script src="threejs/OBJLoader.js"></script>
+		<script src="threejs/MTLLoader.js"></script>
+
+		<script>
+
+			if ( WEBGL.isWebGLAvailable() === false ) {
+
+				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
+
+			}
+
+			var scene, camera, renderer, exporter, mesh;
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 114514 );
+				camera.position.set( 200, 100, 200 );
+
+				scene = new THREE.Scene();
+				<!-- scene.setClearColor(0xd3df56, 1); -->
+				<!-- scene.background = new THREE.Color( 0xa0a0a0 ); -->
+				<!-- scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 ); -->
+
+				exporter = new THREE.STLExporter();
+
+				//
+
+				var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+				hemiLight.position.set( 0, 200, 0 );
+				scene.add( hemiLight );
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff );
+				directionalLight.position.set( 0, 200, 100 );
+				directionalLight.castShadow = true;
+				directionalLight.shadow.camera.top = 180;
+				directionalLight.shadow.camera.bottom = - 100;
+				directionalLight.shadow.camera.left = - 120;
+				directionalLight.shadow.camera.right = 120;
+				scene.add( directionalLight );
+
+				// ground
+
+				//var ground = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+				//ground.rotation.x = - Math.PI / 2;
+				//ground.receiveShadow = true;
+				//scene.add( ground );
+				
+				var grid = new THREE.GridHelper( 2000, 20, 0xd4d4d4 , 0x777777  );
+				grid.material.opacity = 0.5;
+				grid.material.transparent = true;
+				scene.add( grid );
+
+				// export mesh
+
+				//var geometry = new THREE.BoxBufferGeometry( 50, 50, 50 );
+				//var material = new THREE.MeshPhongMaterial( { color: 0x00ff00 } );
+
+				//mesh = new THREE.Mesh( geometry, material );
+				//mesh.castShadow = true;
+				//mesh.position.y = 25;
+				//scene.add( mesh );
+
+				//
+				
+				
+				/*const loader = new THREE.ObjectLoader();
+
+				loader.load(
+				// 资源的URL
+					"threejs/models/json/beer.json",
+
+					// onLoad回调
+					// Here the loaded data is assumed to be an object
+					function ( obj ) {
+					// Add the loaded object to the scene
+						scene.add( obj );
+					},
+
+					// onProgress回调
+					function ( xhr ) {
+						console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+					},
+
+					// onError回调
+					function ( err ) {
+						console.error( 'An error happened' );
+					}
+				);
+
+
+		// 或者，解析先前加载的JSON结构
+		const object = loader.parse( a_json_object );
+
+		scene.add( object );*/
+		
+		//
+		
+		
+		// instantiate a loader
+/*var loader = new THREE.OBJLoader();
+
+// load a resource
+			const mtlLoader2 = new THREE.MTLLoader();
+            mtlLoader2.load('hreejs/models/json/assets/materials.mtl', material => {
+                material.preload()
+                //设置材质的透明度
+                material.materials.wire_255255255.transparent = true;
+                material.materials.wire_255255255.opacity = 0.3;
+                material.materials.wire_000000000.transparent = true;
+                material.materials.wire_000000000.opacity = 0.3; 
+                material.materials.wire_115115115.transparent = true;
+                material.materials.wire_115115115.opacity = 0.3;
+                //mtl文件中的材质设置到obj加载器
+                loader.setMaterials(material)
+				}
+
+	loader.load(
+		// resource URL
+		'threejs/models/json/assets/model.obj',
+		// called when resource is loaded
+		function ( object ) {
+	    
+			object.scale.set(100,100,100);
+			scene.add( object );
+	
+		},
+		// called when loading is in progresses
+		function ( xhr ) {
+
+			console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+		},
+		// called when loading has errors
+		function ( error ) {
+
+			console.log( 'An error happened' );
+
+		}
+	);*/
+		////2
+		
+		var objLoader = new THREE.OBJLoader();
+        var materialsCreator = new THREE.MTLLoader();
+        loadMTL();
+        loadOBJ();
+
+        // 加载MTL文件（如果不需要材质，可直接执行loadOBJ()，否则必须优先加载材质）
+        function loadMTL() {
+            materialsCreator.load('threejs/models/json/assets/materials.mtl', function (materialsCreator) {
+			materialsCreator.preload();
+				var materials = materialsCreator.getAsArray();
+				 for (var i = 0; i < materials.length; i++) {
+				var material = materials[i];
+                // OBJ模型会和MaterialCreator包含的材质相对应
+                //materials.preload();
+				console.log(materials);
+				<!-- 这里不能使用 -->
+				//material.magFilter = THREE.NearestFilter;
+				//material.material.shininess=0;
+				//material.material.transparent=true;
+				}
+                objLoader.setMaterials(materialsCreator);  
+				
+                loadOBJ(materials);
+            }, function () {
+                console.log('import MTL success!');
+            }, function (err) {
+                console.log('MTL error!', err);
+            });
+        }
+        // 加载OBJ文件
+        function loadOBJ() {
+            // 如果没有材质文件，系统自动设置Phong网格材质
+            objLoader.load('threejs/models/json/assets/model.obj', function (obj) {
+                // 初始化模型坐标值（根据需要自行调整）
+                obj.position.x = 0;
+                obj.position.y = 0;
+                obj.position.z = 0;
+                // 设置模型缩放比例
+				
+                obj.scale.set(100, 100, 100);
+                // 把模型添加到场景里面
+                scene.add(obj);
+                
+                setTimeout(render, 400);
+            }, function () {
+                console.log('import OBJ success!');
+            }, function (err) {
+                console.log('OBJ error!', err);
+            });
+        }
+		
+		
+		////3
+		
+/*		var objLoader = new THREE.OBJLoader();
+var mtlLoader = new THREE.MTLLoader();
+mtlLoader.setPath('threejs/models/json/assets/'); // 设置mtl文件的路径
+mtlLoader.load('materials.mtl', function (materials) { // 加载mtl文件
+    materials.preload(); // 预加载材质
+    var materialsArray = materials.getAsArray(); // 获取材质数组
+    for (var i = 0; i < materialsArray.length; i++) { // 遍历材质数组
+        var material = materialsArray[i]; // 获取第i个材质
+        var texture = material.map; // 获取材质的贴图
+        texture.magFilter = THREE.NearestFilter; // 给贴图的magFilter属性赋值
+    }
+    objLoader.setMaterials(materials); // 设置模型的材质
+    objLoader.setPath('threejs/models/json/assets/'); // 设置obj文件的路径
+    objLoader.load('model.obj', function (obj) { // 加载obj文件
+        // 初始化模型坐标值（根据需要自行调整）
+        obj.position.x = 0;
+        obj.position.y = 0;
+        obj.position.z = 0;
+        // 设置模型缩放比例
+        obj.scale.set(100, 100, 100);
+        // 把模型添加到场景里面
+        scene.add(obj);
+        setTimeout(render, 400);
+    }, function () {
+        console.log('import OBJ success!');
+    }, function (err) {
+        console.log('OBJ error!', err);
+    });
+}, function () {
+    console.log('import MTL success!');
+}, function (err) {
+    console.log('MTL error!', err);
+});*/
+		
+		////
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				document.body.appendChild( renderer.domElement );
+				renderer.setClearColor(0x3b3b3b,0.5);
+
+				//
+
+				var controls = new THREE.OrbitControls( camera, renderer.domElement );
+				controls.target.set( 0, 25, 0 );
+				controls.update();
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );
+
+			}
+
+			function exportASCII() {
+
+				var result = exporter.parse( mesh );
+				saveString( result, 'box.stl' );
+
+			}
+
+			function exportBinary() {
+
+				var result = exporter.parse( mesh, { binary: true } );
+				saveArrayBuffer( result, 'box.stl' );
+
+			}
+
+			var link = document.createElement( 'a' );
+			link.style.display = 'none';
+			document.body.appendChild( link );
+
+			/*function save( blob, filename ) {
+
+				link.href = URL.createObjectURL( blob );
+				link.download = filename;
+				link.click();
+
+			}
+
+			function saveString( text, filename ) {
+
+				save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+
+			}
+
+			function saveArrayBuffer( buffer, filename ) {
+
+				save( new Blob( [ buffer ], { type: 'application/octet-stream' } ), filename );
+
+			}*/
+
+		</script>
+
+	</body>
+</html>
