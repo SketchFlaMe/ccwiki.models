@@ -29,7 +29,7 @@
 	</head>
 	<body>
 		<div id="info">
-			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - 官方examples修改(图片插值未修改)<br/><br/>
+			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - 官方examples修改(图片插值未修改 gltf加载器颜色不对)<br/><br/>
 		</div>
 
 		<script src="threejs/three.js"></script>
@@ -39,6 +39,9 @@
 		<script src="threejs/WebGL.js"></script>
 		<script src="threejs/OBJLoader.js"></script>
 		<script src="threejs/MTLLoader.js"></script>
+		<script src="threejs/FirstPersonControls.js"></script>
+		<script src="threejs/GLTFLoader.js"></script>
+		<script src="threejs/DRACOLoader.js"></script>
 
 		<script>
 
@@ -57,7 +60,8 @@
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 114514 );
 				camera.position.set( 200, 100, 200 );
-
+				
+				
 				scene = new THREE.Scene();
 				<!-- scene.setClearColor(0xd3df56, 1); -->
 				<!-- scene.background = new THREE.Color( 0xa0a0a0 ); -->
@@ -181,6 +185,7 @@
 	);*/
 		////2
 		
+		//obj加载器
 		var objLoader = new THREE.OBJLoader();
         var materialsCreator = new THREE.MTLLoader();
         loadMTL();
@@ -232,6 +237,54 @@
             });
         }
 		
+		
+		
+		
+		//gltf加载器
+		
+		// Instantiate a loader
+var loader = new THREE.GLTFLoader();
+
+// Optional: Provide a DRACOLoader instance to decode compressed mesh data
+//THREE.DRACOLoader.setDecoderPath( 'threejs/models/json/assets/materials.mtl' );
+//loader.setDRACOLoader( new THREE.DRACOLoader() );
+
+// Load a glTF resource
+loader.load(
+	// resource URL
+	'threejs/models/json/model5.gltf',
+	// called when the resource is loaded
+	function ( gltf ) {
+	
+		gltf.scene.position.x = 200;
+        gltf.scene.position.y = 0;
+        gltf.scene.position.z = 0;
+        // 设置模型缩放比例
+				
+        gltf.scene.scale.set(100, 100, 100);
+
+		scene.add( gltf.scene );
+
+		/*gltf.animations; // Array<THREE.AnimationClip>
+		gltf.scene; // THREE.Scene
+		gltf.scenes; // Array<THREE.Scene>
+		gltf.cameras; // Array<THREE.Camera>
+		gltf.asset; // Object*/
+
+	},
+	// called while loading is progressing
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
+);
 		
 		////3
 		
