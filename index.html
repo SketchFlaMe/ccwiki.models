@@ -29,7 +29,7 @@
 	</head>
 	<body>
 		<div id="info">
-			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - 官方examples修改(图片插值未修改 gltf加载器颜色不对)<br/><br/>
+			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - 官方examples修改(obj图片插值未修改)<br/><br/>
 		</div>
 
 		<script src="threejs/three.js"></script>
@@ -256,12 +256,21 @@ loader.load(
 	// called when the resource is loaded
 	function ( gltf ) {
 	
-		gltf.scene.position.x = 200;
+		gltf.scene.position.x = 300;
         gltf.scene.position.y = 0;
         gltf.scene.position.z = 0;
         // 设置模型缩放比例
 				
         gltf.scene.scale.set(100, 100, 100);
+	
+		/*gltf.scene.traverse( function ( child ) { 
+		if ( child.isMesh ) { child.frustumCulled = false; 
+		//模型阴影 
+		child.castShadow = true; 
+		//模型自发光 
+		child.material.emissive = child.material.color; 
+		child.material.emissiveMap = child.material.map ; 
+		}})*/
 
 		scene.add( gltf.scene );
 
@@ -330,8 +339,8 @@ mtlLoader.load('materials.mtl', function (materials) { // 加载mtl文件
 				renderer.shadowMap.enabled = true;
 				document.body.appendChild( renderer.domElement );
 				renderer.setClearColor(0x3b3b3b,0.5);
-				renderer.outputEncoding = THREE.sRGBEncoding;
-
+				renderer.gammaOutput = true;
+				renderer.gammaFactor = 2.2;
 
 				//
 
