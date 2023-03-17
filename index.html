@@ -330,6 +330,8 @@ mtlLoader.load('materials.mtl', function (materials) { // 加载mtl文件
 				renderer.shadowMap.enabled = true;
 				document.body.appendChild( renderer.domElement );
 				renderer.setClearColor(0x3b3b3b,0.5);
+				renderer.outputEncoding = THREE.sRGBEncoding;
+
 
 				//
 
